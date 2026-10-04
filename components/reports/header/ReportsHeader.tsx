@@ -1,0 +1,38 @@
+// filepath: components/reports/header/ReportsHeader.tsx
+import * as React from "react";
+import { ArrowLeft } from "lucide-react";
+
+interface ReportsHeaderProps {
+  onBack?: () => void;
+}
+
+export function ReportsHeader({ onBack }: ReportsHeaderProps) {
+  return (
+    <header className="sticky top-0 z-40 w-full border-b border-[#E7E5E4] bg-white/95 backdrop-blur-xs">
+      <div className="mx-auto flex h-16 w-full max-w-md items-center justify-between px-4 sm:px-6">
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={onBack || (() => (window.location.href = "/"))}
+            className="flex h-12 w-12 items-center justify-center rounded-xl text-[#1C1917] hover:bg-stone-100 active:bg-stone-200 transition-colors"
+            aria-label="Back to home"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </button>
+          <div>
+            <h1 className="text-lg font-bold leading-tight text-[#1C1917]">
+              Reports
+            </h1>
+            <p className="text-xs text-[#78716C] leading-none mt-0.5">
+              Business overview and ledger
+            </p>
+          </div>
+        </div>
+
+        <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-50 text-[#2563EB] border border-blue-200">
+          Owner
+        </span>
+      </div>
+    </header>
+  );
+}

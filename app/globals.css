@@ -1,0 +1,28 @@
+/* filepath: app/globals.css */
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --background: #FAFAF9;
+    --foreground: #1C1917;
+    --border: #E7E5E4;
+  }
+
+  * {
+    border-color: var(--border);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    min-height: 100vh;
+    margin: 0;
+  }
+
+  /* Prevent browser viewport zooming on Android/iOS when focusing inputs */
+  input, select, textarea {
+    font-size: 16px;
+  }
+}
