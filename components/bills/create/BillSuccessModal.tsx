@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { ArrowRight, CheckCircle, Eye, Loader2, Share2 } from "lucide-react";
 import { markInvoiceShared } from "@/actions/invoiceActions";
 import { usePreparedInvoicePdf } from "@/hooks/usePreparedInvoicePdf";
@@ -10,9 +11,9 @@ import { type InvoiceDetail } from "@/lib/services/invoiceService";
 import { BillPreviewModal } from "./BillPreviewModal";
 import { useConnectivity } from "@/components/common/ConnectivityProvider";
 
-interface Props { invoice: InvoiceDetail; onNewBill: () => void; onViewAll: () => void; }
+interface Props { invoice: InvoiceDetail; onNewBill: () => void; }
 
-export function BillSuccessModal({ invoice, onNewBill, onViewAll }: Props) {
+export function BillSuccessModal({ invoice, onNewBill }: Props) {
   const [isPreviewOpen, setIsPreviewOpen] = React.useState(false);
   const [isSharing, setIsSharing] = React.useState(false);
   const [isShared, setIsShared] = React.useState(Boolean(invoice.sharedAt));
@@ -58,7 +59,7 @@ export function BillSuccessModal({ invoice, onNewBill, onViewAll }: Props) {
           {note && <p className="text-[11px] text-stone-600">{note}</p>}
           {prepared.error && <div className="space-y-2"><p className="text-[11px] text-red-700">{prepared.error}</p><button type="button" onClick={prepared.retry} className="min-h-10 rounded-xl border border-red-200 px-4 text-xs font-bold text-red-700">Retry PDF</button></div>}
           <button type="button" onClick={onNewBill} className="min-h-[46px] w-full rounded-2xl border border-stone-200 text-xs font-bold">New Bill</button>
-          <button type="button" onClick={onViewAll} className="flex min-h-[46px] w-full items-center justify-center gap-1.5 rounded-2xl text-xs font-bold text-blue-700">View All Bills <ArrowRight className="h-3.5 w-3.5" /></button>
+          <Link href="/bills" className="flex min-h-[46px] w-full items-center justify-center gap-1.5 rounded-2xl text-xs font-bold text-blue-700">View All Bills <ArrowRight className="h-3.5 w-3.5" /></Link>
         </div>
       </div>
       {isPreviewOpen && <BillPreviewModal invoice={invoice} onClose={() => setIsPreviewOpen(false)} />}

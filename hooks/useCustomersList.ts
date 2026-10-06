@@ -14,12 +14,13 @@ import { type NewCustomerFormData } from "@/components/customers/list/AddCustome
 
 export type CustomerFilterType = "ALL" | "HAS_BALANCE" | "INACTIVE";
 
-export function useCustomersList() {
-  const [customers, setCustomers] = React.useState<CustomerWithBalance[]>([]);
+export function useCustomersList(initialCustomers: CustomerWithBalance[] = []) {
+  const [customers, setCustomers] = React.useState<CustomerWithBalance[]>(initialCustomers);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [activeFilter, setActiveFilter] = React.useState<CustomerFilterType>("ALL");
   const [isAddModalOpen, setIsAddModalOpen] = React.useState(false);
-  const [isLoading, setIsLoading] = React.useState(true);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const initialRender = React.useRef(true);
 
   const fetchCustomers = React.useCallback(async (query: string, filter: CustomerFilterType) => {
     setIsLoading(true);
@@ -37,6 +38,10 @@ export function useCustomersList() {
   }, []);
 
   React.useEffect(() => {
+    if (initialRender.current) {
+      initialRender.current = false;
+      return;
+    }
     const timer = setTimeout(() => {
       fetchCustomers(searchQuery, activeFilter);
     }, 200);

@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/.gradle-user
 /.pnp
 .pnp.*
 .yarn/*
@@ -23,6 +24,8 @@
 # misc
 .DS_Store
 *.pem
+*.keystore
+*.jks
 
 # debug
 npm-debug.log*

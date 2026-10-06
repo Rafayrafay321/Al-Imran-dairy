@@ -17,9 +17,21 @@ import { getShopSettingsAction } from "@/actions/masterDataActions";
 import { toFriendlyError } from "@/lib/friendlyError";
 import { formatIsoDate } from "@/lib/date";
 import { normalizePakistanPhone } from "@/lib/utils/phone";
+import { Capacitor } from "@capacitor/core";
+import { AppLauncher } from "@capacitor/app-launcher";
 
 export type ReportsTabType = "balances" | "monthly" | "daily";
 export type BalancesSortOrder = "balance_desc" | "name_asc";
+
+export interface ReportsInitialData {
+  customers: Customer[];
+  monthlySales: SalesReportCustomerRow[];
+  dailyEntries: WeeklySummaryEntry[];
+  shopSettings: ShopSettings;
+  selectedMonth: string;
+  selectedDate: string;
+  error?: string | null;
+}
 
 function todayIsoDate() {
   return formatIsoDate(new Date());
@@ -37,26 +49,26 @@ function shiftMonth(month: string, offset: number) {
   return `${value.getFullYear()}-${String(value.getMonth() + 1).padStart(2, "0")}`;
 }
 
-export function useReportsData() {
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [error, setError] = React.useState<string | null>(null);
+export function useReportsData(initialData?: ReportsInitialData) {
+  const [isLoading, setIsLoading] = React.useState(!initialData);
+  const [error, setError] = React.useState<string | null>(initialData?.error ?? null);
   const [activeTab, setActiveTab] = React.useState<ReportsTabType>("balances");
-  const [shopSettings, setShopSettings] = React.useState<ShopSettings>({
+  const [shopSettings, setShopSettings] = React.useState<ShopSettings>(initialData?.shopSettings ?? {
     shopName: "Al-Imran Dairy",
     phone: "0306-4703539",
   });
 
   // Balances Tab State
   const [balanceSort, setBalanceSort] = React.useState<BalancesSortOrder>("balance_desc");
-  const [rawCustomers, setRawCustomers] = React.useState<Customer[]>([]);
+  const [rawCustomers, setRawCustomers] = React.useState<Customer[]>(initialData?.customers ?? []);
 
   // Monthly Sales Tab State
-  const [selectedMonth, setSelectedMonth] = React.useState(() => todayIsoDate().slice(0, 7));
-  const [monthlySales, setMonthlySales] = React.useState<SalesReportCustomerRow[]>([]);
+  const [selectedMonth, setSelectedMonth] = React.useState(() => initialData?.selectedMonth ?? todayIsoDate().slice(0, 7));
+  const [monthlySales, setMonthlySales] = React.useState<SalesReportCustomerRow[]>(initialData?.monthlySales ?? []);
 
   // Daily Deliveries Tab State
-  const [selectedDate, setSelectedDate] = React.useState(todayIsoDate);
-  const [dailyEntries, setDailyEntries] = React.useState<WeeklySummaryEntry[]>([]);
+  const [selectedDate, setSelectedDate] = React.useState(() => initialData?.selectedDate ?? todayIsoDate());
+  const [dailyEntries, setDailyEntries] = React.useState<WeeklySummaryEntry[]>(initialData?.dailyEntries ?? []);
 
   React.useEffect(() => {
     async function loadReports() {
@@ -78,7 +90,7 @@ export function useReportsData() {
       } finally { setIsLoading(false); }
     }
     loadReports();
-  }, [selectedDate, selectedMonth]);
+  }, [initialData, selectedDate, selectedMonth]);
 
   const customersWithBalance = React.useMemo(() => {
     const list = [...rawCustomers];
@@ -92,7 +104,7 @@ export function useReportsData() {
     return rawCustomers.reduce((sum, c) => sum + c.previousBalance, 0);
   }, [rawCustomers]);
 
-  const handleSendReminder = (customer: Customer) => {
+  const handleSendReminder = async (customer: Customer) => {
     if (customer.previousBalance <= 0) return;
 
     const message = 
@@ -110,7 +122,9 @@ ${shopSettings.shopName}
     if (!phone.isValid || !phone.normalized) return;
 
     const whatsappUrl = `https://wa.me/${phone.normalized}?text=${encodeURIComponent(message)}`;
-    if (typeof window !== "undefined") {
+    if (Capacitor.isNativePlatform()) {
+      await AppLauncher.openUrl({ url: whatsappUrl });
+    } else if (typeof window !== "undefined") {
       window.open(whatsappUrl, "_blank");
     }
   };

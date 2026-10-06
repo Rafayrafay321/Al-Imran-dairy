@@ -8,9 +8,10 @@ import { GeneratedBillRow } from "./GeneratedBillRow";
 import { NotBilledCustomerRow } from "./NotBilledCustomerRow";
 import { PageSkeleton } from "@/components/common/PageSkeleton";
 import { EmptyState } from "@/components/common/EmptyState";
+import { type WeeklyBillsOverview } from "@/lib/services/invoiceService";
 
-export function BillsListScreen() {
-  const { generated, notBilled, weekStart, weekEnd, isLoading, error, shiftWeek, retry } = useBillsList();
+export function BillsListScreen({ initialOverview, showHeader = true }: { initialOverview?: WeeklyBillsOverview; showHeader?: boolean }) {
+  const { generated, notBilled, weekStart, weekEnd, isLoading, error, shiftWeek, retry } = useBillsList(initialOverview);
   const [onlyUnshared, setOnlyUnshared] = React.useState(false);
   const visibleGenerated = onlyUnshared
     ? generated.filter((invoice) => invoice.status === "ISSUED" && !invoice.sharedAt)
@@ -18,7 +19,7 @@ export function BillsListScreen() {
 
   return (
     <div className="min-h-screen bg-[#FAFAF9]">
-      <BillsHeader />
+      {showHeader && <BillsHeader />}
       <main className="mx-auto w-full max-w-md space-y-5 px-4 py-5 pb-20">
         <WeekPicker weekStart={weekStart} weekEnd={weekEnd} onShiftWeek={shiftWeek} />
 

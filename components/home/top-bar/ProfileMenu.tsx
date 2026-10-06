@@ -2,6 +2,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { User, LogOut, ChevronDown, Settings } from "lucide-react";
 import { RoleBadge } from "./RoleBadge";
 import { type UserRole } from "@/lib/data/types";
@@ -60,19 +61,14 @@ export function ProfileMenu({ name, role, onLogout }: ProfileMenuProps) {
           </div>
 
           {role === "OWNER" && (
-            <button
-              type="button"
-              onClick={() => {
-                setIsOpen(false);
-                if (typeof window !== "undefined") {
-                  window.location.href = "/settings";
-                }
-              }}
+            <Link
+              href="/settings"
+              onClick={() => setIsOpen(false)}
               className="flex min-h-[48px] w-full items-center gap-2.5 rounded-xl px-3 text-sm font-medium text-[#1C1917] transition-colors hover:bg-stone-50 active:bg-stone-100 mb-1"
             >
               <Settings className="h-4 w-4 shrink-0 text-[#78716C]" />
               <span>Shop Settings</span>
-            </button>
+            </Link>
           )}
 
           <button

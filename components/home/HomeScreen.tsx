@@ -24,12 +24,6 @@ export function HomeScreen() {
 
   if (isLoading) return <main className="mx-auto min-h-screen w-full max-w-md p-4"><PageSkeleton rows={4} /></main>;
 
-  const navigateTo = (path: string) => {
-    if (typeof window !== "undefined") {
-      window.location.href = path;
-    }
-  };
-
   return (
     <div className="flex min-h-screen w-full flex-col bg-[#FAFAF9] overflow-x-hidden">
       {/* Sticky Top Bar with Brand & Profile */}
@@ -49,14 +43,7 @@ export function HomeScreen() {
         />
 
         {/* Main Action Cards */}
-        <HomeActionStack
-          isOwner={isOwner}
-          onWeeklyBills={() => navigateTo("/bills/new")}
-          onAllBills={() => navigateTo("/bills")}
-          onCustomers={() => navigateTo("/customers")}
-          onReports={() => navigateTo("/reports")}
-          onMyEntries={() => navigateTo("/bills?filter=my")}
-        />
+        <HomeActionStack isOwner={isOwner} />
 
         {/* Today's Summary Card */}
         <TodaySummaryCard metrics={todayMetrics} />

@@ -1,8 +1,8 @@
 // filepath: lib/services/reportService.ts
-import { sql, eq, desc, and } from "drizzle-orm";
+import { sql, eq, and } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { customers, invoices } from "@/lib/db/schema";
-import { customerBalanceSql } from "@/lib/balance";
+import { listCustomersFromDb } from "@/lib/services/customerService";
 import {
   type Customer,
   type TodayMetrics,
@@ -14,22 +14,10 @@ import {
  * Returns customers sorted by balance (descending) for the balances report.
  */
 export async function getBalancesReportFromDb(): Promise<Customer[]> {
-  const rows = await db
-    .select({
-      id: customers.id,
-      name: customers.name,
-      phone: customers.phone,
-      address: customers.address,
-      defaultMilkTypeId: customers.defaultMilkTypeId,
-      isActive: customers.isActive,
-      balance: customerBalanceSql,
-    })
-    .from(customers)
-    .where(eq(customers.isActive, true))
-    .orderBy(desc(customerBalanceSql));
+  const rows = await listCustomersFromDb({ filter: "HAS_BALANCE" });
 
   return rows.map((r) => {
-    const bal = parseFloat(r.balance || "0");
+    const bal = r.balance;
     return {
       id: r.id,
       name: r.name,

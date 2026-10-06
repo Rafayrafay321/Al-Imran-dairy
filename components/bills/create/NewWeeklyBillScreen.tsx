@@ -2,7 +2,6 @@
 "use client";
 
 import * as React from "react";
-import { useRouter } from "next/navigation";
 import { useNewWeeklyBill } from "@/hooks/useNewWeeklyBill";
 import { NewBillHeader } from "./NewBillHeader";
 import { CustomerSelector } from "./CustomerSelector";
@@ -19,7 +18,6 @@ interface NewWeeklyBillScreenProps {
 }
 
 export function NewWeeklyBillScreen({ initialCustomerId }: NewWeeklyBillScreenProps) {
-  const router = useRouter();
   const {
     customers,
     milkTypes,
@@ -126,7 +124,6 @@ export function NewWeeklyBillScreen({ initialCustomerId }: NewWeeklyBillScreenPr
         <BillSuccessModal
           invoice={createdInvoice}
           onNewBill={resetForm}
-          onViewAll={() => router.push("/bills")}
         />
       )}
     </div>

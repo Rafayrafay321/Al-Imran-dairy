@@ -16,10 +16,13 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@capacitor/android": "^8.5.2",
+    "@capacitor/app-launcher": "^8.0.1",
     "@capacitor/core": "^8.5.2",
     "@capacitor/filesystem": "^8.1.4",
     "@capacitor/network": "^8.0.1",
     "@capacitor/share": "^8.0.3",
+    "@capacitor/status-bar": "^8.0.4",
     "@neon/config": "^1.8.3",
     "bcryptjs": "^3.0.3",
     "clsx": "^2.1.1",
@@ -37,6 +40,8 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^8.5.2",
     "@netlify/plugin-nextjs": "^5.16.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",

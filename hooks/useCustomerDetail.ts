@@ -23,17 +23,26 @@ import { toFriendlyError } from "@/lib/friendlyError";
 
 export type DetailTabType = "invoices" | "payments" | "rates";
 
-export function useCustomerDetail(customerId: string) {
-  const [customer, setCustomer] = React.useState<CustomerWithBalance | null>(null);
+export interface CustomerDetailInitialData {
+  customer: CustomerWithBalance | null;
+  invoices: InvoiceDetail[];
+  payments: PaymentRecord[];
+  milkTypes: MilkTypeRecord[];
+  isOwner: boolean;
+  error?: string | null;
+}
+
+export function useCustomerDetail(customerId: string, initialData?: CustomerDetailInitialData) {
+  const [customer, setCustomer] = React.useState<CustomerWithBalance | null>(initialData?.customer ?? null);
   const [activeTab, setActiveTab] = React.useState<DetailTabType>("invoices");
   const [isPaymentModalOpen, setIsPaymentModalOpen] = React.useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
-  const [isOwner, setIsOwner] = React.useState(false);
-  const [invoices, setInvoices] = React.useState<InvoiceDetail[]>([]);
-  const [payments, setPayments] = React.useState<PaymentRecord[]>([]);
-  const [milkTypes, setMilkTypes] = React.useState<MilkTypeRecord[]>([]);
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [error, setError] = React.useState<string | null>(null);
+  const [isOwner, setIsOwner] = React.useState(initialData?.isOwner ?? false);
+  const [invoices, setInvoices] = React.useState<InvoiceDetail[]>(initialData?.invoices ?? []);
+  const [payments, setPayments] = React.useState<PaymentRecord[]>(initialData?.payments ?? []);
+  const [milkTypes, setMilkTypes] = React.useState<MilkTypeRecord[]>(initialData?.milkTypes ?? []);
+  const [isLoading, setIsLoading] = React.useState(!initialData);
+  const [error, setError] = React.useState<string | null>(initialData?.error ?? null);
 
   const reloadCustomer = React.useCallback(async () => {
     const res = await getCustomerByIdAction(customerId);
@@ -43,6 +52,7 @@ export function useCustomerDetail(customerId: string) {
   }, [customerId]);
 
   React.useEffect(() => {
+    if (initialData) return;
     let mounted = true;
 
     async function loadData() {
@@ -81,7 +91,7 @@ export function useCustomerDetail(customerId: string) {
     return () => {
       mounted = false;
     };
-  }, [customerId]);
+  }, [customerId, initialData]);
 
   const handleRecordPayment = async (amount: number, date: string, note?: string) => {
     if (!customer) {
@@ -157,12 +167,6 @@ export function useCustomerDetail(customerId: string) {
     } else throw new Error(res.error || "Could not reset the rate.");
   };
 
-  const handleNewInvoiceForCustomer = () => {
-    if (typeof window !== "undefined") {
-      window.location.href = `/bills/new`;
-    }
-  };
-
   return {
     customer,
     activeTab,
@@ -181,7 +185,6 @@ export function useCustomerDetail(customerId: string) {
     handleDeletePayment,
     handleUpdateSpecialRate,
     handleDeleteSpecialRate,
-    handleNewInvoiceForCustomer,
     setCustomer,
     reloadCustomer,
   };

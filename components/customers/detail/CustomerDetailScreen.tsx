@@ -2,7 +2,7 @@
 "use client";
 
 import * as React from "react";
-import { useCustomerDetail } from "@/hooks/useCustomerDetail";
+import { useCustomerDetail, type CustomerDetailInitialData } from "@/hooks/useCustomerDetail";
 import { CustomerDetailHeader } from "./CustomerDetailHeader";
 import { CustomerBalanceHero } from "./CustomerBalanceHero";
 import { CustomerActionRow } from "./CustomerActionRow";
@@ -18,11 +18,15 @@ import { PageSkeleton } from "@/components/common/PageSkeleton";
 interface CustomerDetailScreenProps {
   customerId: string;
   onBack?: () => void;
+  initialData?: CustomerDetailInitialData;
+  showHeader?: boolean;
 }
 
 export function CustomerDetailScreen({
   customerId,
   onBack,
+  initialData,
+  showHeader = true,
 }: CustomerDetailScreenProps) {
   const [paymentSuccess, setPaymentSuccess] = React.useState<{
     amount: number;
@@ -46,9 +50,8 @@ export function CustomerDetailScreen({
     handleDeletePayment,
     handleUpdateSpecialRate,
     handleDeleteSpecialRate,
-    handleNewInvoiceForCustomer,
     setCustomer,
-  } = useCustomerDetail(customerId);
+  } = useCustomerDetail(customerId, initialData);
 
   if (isLoading) {
     return (
@@ -60,22 +63,23 @@ export function CustomerDetailScreen({
   return (
     <div className="flex min-h-screen w-full flex-col bg-[#FAFAF9] overflow-x-hidden">
       {/* Top Header with Owner Edit Button */}
-      <CustomerDetailHeader
+      {showHeader && <CustomerDetailHeader
         customer={customer}
         onBack={onBack}
         isOwner={isOwner}
         onEdit={() => setIsEditModalOpen(true)}
-      />
+      />}
 
       {/* Main Container */}
       <main className="flex-1 w-full max-w-md mx-auto px-4 py-5 sm:px-6 space-y-4 pb-12">
+        {!showHeader && <div><h1 className="text-lg font-bold text-stone-900">{customer.name}</h1><p className="mt-0.5 font-mono text-xs text-stone-600">{customer.phone}</p></div>}
         {error && <p className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-800">{error}</p>}
         {/* Large Balance Hero Number (COMPUTED LIVE BALANCE) */}
         <CustomerBalanceHero balance={customer.balance} />
 
         {/* Action Buttons: New Bill & Record Payment */}
         <CustomerActionRow
-          onNewBill={handleNewInvoiceForCustomer}
+          newBillHref={`/bills/new?customerId=${customer.id}`}
           onRecordPayment={() => setIsPaymentModalOpen(true)}
         />
 

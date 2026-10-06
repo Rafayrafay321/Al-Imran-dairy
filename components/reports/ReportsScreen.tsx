@@ -2,7 +2,7 @@
 "use client";
 
 import * as React from "react";
-import { useReportsData } from "@/hooks/useReportsData";
+import { useReportsData, type ReportsInitialData } from "@/hooks/useReportsData";
 import { ReportsHeader } from "./header/ReportsHeader";
 import { ReportsTabsNav } from "./header/ReportsTabsNav";
 import { BalancesTabContent } from "./balances/BalancesTabContent";
@@ -12,9 +12,11 @@ import { PageSkeleton } from "@/components/common/PageSkeleton";
 
 interface ReportsScreenProps {
   onBack?: () => void;
+  initialData?: ReportsInitialData;
+  showHeader?: boolean;
 }
 
-export function ReportsScreen({ onBack }: ReportsScreenProps) {
+export function ReportsScreen({ onBack, initialData, showHeader = true }: ReportsScreenProps) {
   const {
     isLoading,
     error,
@@ -35,12 +37,12 @@ export function ReportsScreen({ onBack }: ReportsScreenProps) {
     dailyEntries,
     dailyTotalLiters,
     dailyTotalAmount,
-  } = useReportsData();
+  } = useReportsData(initialData);
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-[#FAFAF9] overflow-x-hidden">
       {/* Top Header */}
-      <ReportsHeader onBack={onBack} />
+      {showHeader && <ReportsHeader onBack={onBack} />}
 
       {/* Main Container */}
       <main className="flex-1 w-full max-w-md mx-auto px-4 py-5 sm:px-6 space-y-4 pb-12">

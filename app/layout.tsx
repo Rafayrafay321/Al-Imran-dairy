@@ -4,6 +4,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ConnectivityProvider } from "@/components/common/ConnectivityProvider";
 import { OfflineBanner } from "@/components/common/OfflineBanner";
+import { NativeAppSetup } from "@/components/common/NativeAppSetup";
+import { StartupScreenLoader } from "@/components/common/AppScreenLoader";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -30,6 +32,8 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <ConnectivityProvider>
+          <NativeAppSetup />
+          <StartupScreenLoader />
           <OfflineBanner />
           {children}
         </ConnectivityProvider>

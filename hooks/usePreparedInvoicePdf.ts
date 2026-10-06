@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { generateInvoicePDF } from "@/lib/pdfGenerator";
 
 export function usePreparedInvoicePdf(invoiceId: string, enabled = true) {
   const [blob, setBlob] = React.useState<Blob | null>(null);
@@ -11,7 +10,7 @@ export function usePreparedInvoicePdf(invoiceId: string, enabled = true) {
   React.useEffect(() => {
     if (!enabled) return;
     let active = true;
-    void generateInvoicePDF(invoiceId).then(
+    void import("@/lib/pdfGenerator").then(({ generateInvoicePDF }) => generateInvoicePDF(invoiceId)).then(
       (prepared) => { if (active) setBlob(prepared); },
       (preparationError) => {
         console.error("Invoice PDF preparation failed", preparationError);

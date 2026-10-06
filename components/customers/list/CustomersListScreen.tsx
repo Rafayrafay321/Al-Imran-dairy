@@ -11,15 +11,14 @@ import { CustomerListEmptyState } from "./CustomerListEmptyState";
 import { CustomerFloatingAddButton } from "./CustomerFloatingAddButton";
 import { AddCustomerModal } from "./AddCustomerModal";
 import { PageSkeleton } from "@/components/common/PageSkeleton";
+import { type CustomerWithBalance } from "@/lib/services/customerService";
 
-interface CustomersListScreenProps {
-  onBack?: () => void;
-  onSelectCustomer?: (customerId: string) => void;
-}
+interface CustomersListScreenProps { onBack?: () => void; initialCustomers?: CustomerWithBalance[]; showHeader?: boolean; }
 
 export function CustomersListScreen({
   onBack,
-  onSelectCustomer,
+  initialCustomers,
+  showHeader = true,
 }: CustomersListScreenProps) {
   const {
     customers,
@@ -32,20 +31,12 @@ export function CustomersListScreen({
     setIsAddModalOpen,
     handleAddCustomer,
     isLoading,
-  } = useCustomersList();
-
-  const handleCustomerClick = (customerId: string) => {
-    if (onSelectCustomer) {
-      onSelectCustomer(customerId);
-    } else if (typeof window !== "undefined") {
-      window.location.href = `/customers/${customerId}`;
-    }
-  };
+  } = useCustomersList(initialCustomers);
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-[#FAFAF9] overflow-x-hidden">
       {/* Sticky Header */}
-      <CustomersListHeader totalCount={totalCount} onBack={onBack} />
+      {showHeader && <CustomersListHeader totalCount={totalCount} onBack={onBack} />}
 
       {/* Main Filter & List Container */}
       <main className="flex-1 w-full max-w-md mx-auto px-4 py-4 sm:px-6 space-y-3.5 pb-28">
@@ -72,7 +63,6 @@ export function CustomersListScreen({
               <CustomerListItem
                 key={customer.id}
                 customer={customer}
-                onClick={handleCustomerClick}
               />
             ))
           )}

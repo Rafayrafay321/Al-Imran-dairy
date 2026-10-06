@@ -3,12 +3,9 @@ import * as React from "react";
 import { PlusCircle } from "lucide-react";
 import { ActionCardBase } from "./ActionCardBase";
 
-interface WeeklyBillsCardProps {
-  isVisible: boolean;
-  onClick?: () => void;
-}
+interface WeeklyBillsCardProps { isVisible: boolean; }
 
-export function WeeklyBillsCard({ isVisible, onClick }: WeeklyBillsCardProps) {
+export function WeeklyBillsCard({ isVisible }: WeeklyBillsCardProps) {
   if (!isVisible) return null;
 
   return (
@@ -17,7 +14,7 @@ export function WeeklyBillsCard({ isVisible, onClick }: WeeklyBillsCardProps) {
       subtitle="Create weekly consolidated bill"
       icon={<PlusCircle className="h-6 w-6 text-[#2563EB]" />}
       variant="default"
-      onClick={onClick}
+      href="/bills/new"
     />
   );
 }

@@ -7,11 +7,12 @@ import { getCalendarWeek, shiftCalendarWeek } from "@/lib/week";
 
 const EMPTY_OVERVIEW: WeeklyBillsOverview = { generated: [], notBilled: [] };
 
-export function useBillsList() {
+export function useBillsList(initialOverview: WeeklyBillsOverview = EMPTY_OVERVIEW) {
   const [{ weekStart, weekEnd }, setWeek] = React.useState(getCalendarWeek());
-  const [overview, setOverview] = React.useState(EMPTY_OVERVIEW);
-  const [isLoading, setIsLoading] = React.useState(true);
+  const [overview, setOverview] = React.useState(initialOverview);
+  const [isLoading, setIsLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const initialRender = React.useRef(true);
 
   const load = React.useCallback(async () => {
     setIsLoading(true);
@@ -24,7 +25,13 @@ export function useBillsList() {
 
   // This effect intentionally starts the server-backed load for the selected week.
   // eslint-disable-next-line react-hooks/set-state-in-effect
-  React.useEffect(() => { void load(); }, [load]);
+  React.useEffect(() => {
+    if (initialRender.current) {
+      initialRender.current = false;
+      return;
+    }
+    void load();
+  }, [load]);
 
   const shiftWeek = (offset: number) => setWeek(shiftCalendarWeek(weekStart, offset));
 

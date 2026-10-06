@@ -2,7 +2,6 @@
 "use client";
 
 import * as React from "react";
-import { useRouter } from "next/navigation";
 import { SettingsHeader } from "./SettingsHeader";
 import { StaffListCard } from "./StaffListCard";
 import { ShopSettingsCard } from "./ShopSettingsCard";
@@ -23,7 +22,6 @@ interface SettingsScreenProps {
 }
 
 export function SettingsScreen({ initialStaffList = [] }: SettingsScreenProps) {
-  const router = useRouter();
   const [staffList, setStaffList] = React.useState<StaffMember[]>(initialStaffList);
   const [isAddOpen, setIsAddOpen] = React.useState(false);
   const [resetTargetStaff, setResetTargetStaff] = React.useState<StaffMember | null>(null);
@@ -93,7 +91,7 @@ export function SettingsScreen({ initialStaffList = [] }: SettingsScreenProps) {
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-[#FAFAF9]">
-      <SettingsHeader onBack={() => router.push("/")} />
+      <SettingsHeader />
 
       <main className="mx-auto w-full max-w-lg flex-1 space-y-5 px-4 py-6 pb-12 sm:px-6">
         {feedback && (

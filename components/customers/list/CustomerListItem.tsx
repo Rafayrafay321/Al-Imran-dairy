@@ -1,5 +1,6 @@
 // filepath: components/customers/list/CustomerListItem.tsx
 import * as React from "react";
+import Link from "next/link";
 import { ChevronRight, Phone } from "lucide-react";
 import { CustomerBalanceBadge } from "./CustomerBalanceBadge";
 
@@ -13,18 +14,14 @@ interface CustomerListItemData {
   isActive?: boolean;
 }
 
-interface CustomerListItemProps {
-  customer: CustomerListItemData;
-  onClick: (customerId: string) => void;
-}
+interface CustomerListItemProps { customer: CustomerListItemData; }
 
-export function CustomerListItem({ customer, onClick }: CustomerListItemProps) {
+export function CustomerListItem({ customer }: CustomerListItemProps) {
   const currentBalance = customer.balance !== undefined ? customer.balance : (customer.previousBalance || 0);
 
   return (
-    <button
-      type="button"
-      onClick={() => onClick(customer.id)}
+    <Link
+      href={`/customers/${customer.id}`}
       className="flex w-full min-h-[72px] items-center justify-between rounded-2xl border border-[#E7E5E4] bg-white p-4 text-left transition-all hover:bg-stone-50 active:scale-[0.99] shadow-2xs focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2"
     >
       <div className="flex flex-col min-w-0 pr-2">
@@ -52,6 +49,6 @@ export function CustomerListItem({ customer, onClick }: CustomerListItemProps) {
         <CustomerBalanceBadge balance={currentBalance} />
         <ChevronRight className="h-4 w-4 text-[#78716C] shrink-0" />
       </div>
-    </button>
+    </Link>
   );
 }
